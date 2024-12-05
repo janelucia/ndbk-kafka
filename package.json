@@ -1,0 +1,11 @@
+{
+  "name": "backend",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts"
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.4"
+  }
+}

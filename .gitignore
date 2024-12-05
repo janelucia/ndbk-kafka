@@ -1,0 +1,4 @@
+.idea
+*.lockb
+
+node_modules
