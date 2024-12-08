@@ -68,3 +68,6 @@ Jetzt sollte man in einer ksqlDB CLI sein und kann die folgenden Befehle ausfüh
   "additionalProperties": false
 }
 ```
+
+
+fehlendes Key shema!!!
