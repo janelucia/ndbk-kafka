@@ -1,4 +1,5 @@
-import { Kafka, Producer } from 'kafkajs'
+import { Producer } from 'kafkajs'
+import {kafka} from "./kafka";
 
 
 export default class ProducerFactory {
@@ -20,7 +21,16 @@ export default class ProducerFactory {
         await this.producer.disconnect()
     }
 
-    public async send(topic: string, message: string) {
+    public async sendJson(topic: string, message: any): Promise<void> {
+        this.producer.send({
+            topic,
+            messages: [
+                {value: JSON.stringify(message)},
+            ],
+        }).catch(e => console.error(e))
+    }
+
+    public async sendAvro(topic: string, message: Buffer): Promise<void> {
         this.producer.send({
             topic,
             messages: [
@@ -30,12 +40,6 @@ export default class ProducerFactory {
     }
 
     private createProducer() : Producer {
-        const kafka = new Kafka({
-            // logLevel: logLevel.DEBUG,
-            clientId: "Our Bluesky Stream Listener",
-            brokers: [`${process.env.BROKER_HOST}:${process.env.BROKER_PORT}`]
-        })
-
         return kafka.producer()
     }
 }

@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "title": "Likes",
+  "description": "Json schema for Likes",
+  "properties": {
+    "post_id": {
+      "type": "string"
+    }
+  },
+  "required": ["post_id"],
+  "additionalProperties": false
+}

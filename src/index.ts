@@ -29,8 +29,18 @@ async function main() {
                     const likedPostUrlParts = likeObject['commit']['record']['subject']['uri'].split('/')
                     const likedPostId = likedPostUrlParts[likedPostUrlParts.length - 1]
 
+                    const likeRecord = {
+                        post_id: likedPostId,
+                    }
 
-                    producer.send('Likes', likedPostId).then(() => {
+                    // const encodedLikeRecord: Buffer = avroType.toBuffer(likeRecord); //
+                    //
+                    //
+                    // producer.sendAvro('likes', encodedLikeRecord).then(() => {
+                    //     console.log(`Liked post: ${likedPostId}`)
+                    // })
+
+                    producer.sendJson('likes', likeRecord).then(() => {
                         console.log(`Liked post: ${likedPostId}`)
                     })
                 }
