@@ -1,71 +1,43 @@
-import {Kafka} from "kafkajs";
-import { WebSocket } from 'ws';
-import { EventEmitter } from 'events';
+import {WebSocket} from 'ws';
+import ProducerFactory from "./ProducerFactory";
 
-// Define the type for RepoCommit events
-interface RepoCommitEvent {
-    repo: string;
-    ops: { action: string; path: string }[];
-}
+const producer = new ProducerFactory()
 
-// Event emitter for handling repo stream events
-class RepoStreamCallbacks extends EventEmitter {
-    constructor() {
-        super();
-    }
-
-    handleRepoCommit(evt: RepoCommitEvent) {
-        console.log("Event from", evt.repo);
-        evt.ops.forEach(op => {
-            console.log(` - ${op.action} record ${op.path}`);
-        });
-    }
-}
-
-
-const kafka = new Kafka({
-    clientId: "Our Bluesky Stream Listener",
-    brokers: [`${process.env.BROKER_HOST}:${process.env.BROKER_PORT}`]
-})
-
-// Now to produce a message to a topic, we'll create a producer using our client:
-const producer = kafka.producer()
-
-// Send messages to kafka
-async function sendToKafka(topic: string, message: string) {
-    await producer.connect()
-    await producer.send({
-        topic,
-        messages: [
-            {value: message},
-        ],
-    })
-    await producer.disconnect()
-}
-
-// get data and send to kafka
+const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
 async function main() {
-    // Create a new RepoStreamCallbacks instance
-    const rsc = new RepoStreamCallbacks();
+
+    await producer.start()
 
     const connection = new WebSocket('wss://jetstream1.us-east.bsky.network/subscribe?wantedCollections=app.bsky.feed.like');
 
     connection.on('message', async function incoming(data: any) {
         try {
-            // Sie könnten hier eine Verarbeitung oder eine Validierung der Daten vornehmen
-            console.log(JSON.parse(data.toString()));
 
-            // await producer.send({
-            //     topic: 'likes',
-            //     messages: [
-            //         { value: data.toString() }, // Senden als String; für JSON müssen Sie möglicherweise JSON.stringify(data) verwenden
-            //     ],
-            // });
+            const likeObject = JSON.parse(data.toString())
 
-            console.log('Nachricht erfolgreich an Kafka gesendet');
+            // console.debug(JSON.stringify(likeObject, null, 2))
+
+            const likeKind = likeObject['kind']
+
+            if (likeKind === "commit") {
+
+                const likeOperation = likeObject['commit']['operation']
+
+                if (likeOperation === "create") {
+                    // send only post ID
+                    const likedPostUrlParts = likeObject['commit']['record']['subject']['uri'].split('/')
+                    const likedPostId = likedPostUrlParts[likedPostUrlParts.length - 1]
+
+
+                    producer.send('Likes', likedPostId).then(() => {
+                        console.log(`Liked post: ${likedPostId}`)
+                    })
+                }
+            }
         } catch (err) {
             console.error('Fehler beim Senden der Nachricht an Kafka', err);
+            console.error(data.toString())
         }
     });
 
@@ -76,3 +48,13 @@ async function main() {
 }
 
 main().catch(e => console.error(e))
+
+signalTraps.forEach(type => {
+    process.once(type, async () => {
+        try {
+            await producer.shutdown()
+        } finally {
+            process.kill(process.pid, type)
+        }
+    })
+})
