@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "title": "Post",
+  "description": "Json schema for Posts",
+  "properties": {
+    "did": {
+      "type": "string"
+    },
+    "rkey": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "lang": {
+      "type": "string"
+    }
+  },
+  "required": ["did", "rkey", "text", "lang"],
+  "additionalProperties": false
+}

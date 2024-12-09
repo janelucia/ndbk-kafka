@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "consumer": "bun --watch src/consumer.ts",
-    "schema": "bun src/schema.ts"
+    "schema": "bun src/schema.ts",
+    "produce": "bun --watch src/post_producer.ts"
   },
   "dependencies": {
     "@atproto/api": "^0.13.19",
