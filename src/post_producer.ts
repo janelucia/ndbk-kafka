@@ -30,9 +30,9 @@ async function main() {
                     const postRecordKey = postObject['commit']['rkey']
 
                     const postText = postRecord['text']
-                    let lang = '?'
+                    let lang = "?"
 
-                    if (postRecord['langs'] !== undefined) {
+                    if (postRecord['langs'] !== undefined && postRecord['langs'].length > 0) {
                         lang = postRecord['langs'][0]
                     }
 

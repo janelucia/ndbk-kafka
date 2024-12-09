@@ -42,7 +42,8 @@ Jetzt sollte man in einer ksqlDB CLI sein und kann die folgenden Befehle ausfüh
 ```sql
 CREATE OR REPLACE TABLE posts_aggregated AS
 SELECT
-    lang AS lang,
+    lang AS key,
+    AS_VALUE(lang) AS lang,
     COUNT(*) AS post_count,
     SUM(LEN(text)) AS total_characters,
     AVG(LEN(text)) AS average_characters,
