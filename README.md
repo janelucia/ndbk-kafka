@@ -54,8 +54,3 @@ FROM post_stream
 GROUP BY lang
     EMIT CHANGES;
 ```
-
-#### NICHT BENÖTIGT 3. Daten von der aggregierten Tabelle in ein neues Kafka-Topic streamen
-```sql
-    CREATE STREAM likes_aggregated_stream (post_id VARCHAR, like_count BIGINT) WITH (kafka_topic='likes_aggregated_topic', value_format='json');
-```
