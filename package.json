@@ -3,9 +3,6 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun --watch src/index.ts",
-    "consumer": "bun --watch src/consumer.ts",
-    "schema": "bun src/schema.ts",
     "produce": "bun --watch src/post_producer.ts"
   },
   "dependencies": {

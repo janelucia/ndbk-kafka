@@ -30,15 +30,6 @@ export default class ProducerFactory {
         }).catch(e => console.error(e))
     }
 
-    public async sendAvro(topic: string, message: Buffer): Promise<void> {
-        this.producer.send({
-            topic,
-            messages: [
-                {value: message},
-            ],
-        }).catch(e => console.error(e))
-    }
-
     private createProducer() : Producer {
         return kafka.producer()
     }

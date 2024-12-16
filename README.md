@@ -50,7 +50,12 @@ SELECT
     WINDOWSTART AS window_start,
     WINDOWEND AS window_end
 FROM post_stream
-         WINDOW TUMBLING (SIZE 1 MINUTES)
+    WINDOW TUMBLING (SIZE 1 MINUTES)
 GROUP BY lang
     EMIT CHANGES;
+```
+
+#### 3. Producer für Posts starten
+```bash
+  bun produce
 ```
